@@ -18,7 +18,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.rndapp.roostremote.Constants;
-import com.rndapp.roostremote.EndpointAdapter;
+import com.rndapp.roostremote.adapters.EndpointAdapter;
 import com.rndapp.roostremote.R;
 import com.rndapp.roostremote.models.Endpoint;
 import com.rndapp.roostremote.models.Option;

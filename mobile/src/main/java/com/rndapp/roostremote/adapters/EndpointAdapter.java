@@ -1,9 +1,8 @@
-package com.rndapp.roostremote;
+package com.rndapp.roostremote.adapters;
 
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.pm.ApplicationInfo;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +11,7 @@ import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
-import com.rndapp.roostremote.adapters.ActionAdapter;
+import com.rndapp.roostremote.R;
 import com.rndapp.roostremote.models.Endpoint;
 
 import java.util.List;
