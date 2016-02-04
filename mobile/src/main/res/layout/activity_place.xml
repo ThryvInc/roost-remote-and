@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    >
+
+    <ImageView
+        android:id="@+id/iv_place_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/primary_transparent"
+        />
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/anim_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        />
+
+    <TextView
+        android:id="@+id/tv_place_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="32dp"
+        android:layout_marginTop="64dp"
+        android:layout_marginBottom="64dp"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:text="Name"
+        />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_devices"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/tv_place_name"
+        />
+
+</RelativeLayout>

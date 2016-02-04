@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.rndapp.roostremote.R;
+import com.rndapp.roostremote.models.Device;
 import com.rndapp.roostremote.models.Endpoint;
 
 import java.util.List;
@@ -21,11 +22,13 @@ import java.util.List;
  */
 public class EndpointAdapter extends RecyclerView.Adapter<EndpointAdapter.EndpointViewHolder>{
     Context context;
+    Device device;
     List<Endpoint> endpoints;
     RequestQueue queue;
 
-    public EndpointAdapter(Context context, List<Endpoint> endpoints) {
+    public EndpointAdapter(Context context, Device device, List<Endpoint> endpoints) {
         this.context = context;
+        this.device = device;
         this.endpoints = endpoints;
         this.queue = Volley.newRequestQueue(context);
     }
@@ -55,7 +58,7 @@ public class EndpointAdapter extends RecyclerView.Adapter<EndpointAdapter.Endpoi
         public EndpointViewHolder(View itemView) {
             super(itemView);
             nameTextView = (TextView) itemView.findViewById(R.id.tv_name);
-            endpointTextView = (TextView) itemView.findViewById(R.id.tv_endpoint);
+            endpointTextView = (TextView) itemView.findViewById(R.id.tv_subtitle);
             itemView.setOnClickListener(this);
         }
 
@@ -85,7 +88,7 @@ public class EndpointAdapter extends RecyclerView.Adapter<EndpointAdapter.Endpoi
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            endpoint.execute(queue, endpoint.getOptionsHolder().getValues().get(which));
+                            endpoint.execute(queue, device, endpoint.getOptionsHolder().getValues().get(which));
                         }
                     });
             builder.show();

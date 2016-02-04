@@ -10,4 +10,11 @@
         <item name="android:divider">#B6B6B6</item>
     </style>
 
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:textColorPrimary">@color/loginTextPrimary</item>
+        <item name="android:textColorSecondary">@color/loginTextSecondary</item>
+    </style>
+
 </resources>
