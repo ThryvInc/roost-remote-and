@@ -20,8 +20,8 @@ public class Endpoint {
     protected String endpoint;
     protected OptionsHolder options;
 
-    public void execute(RequestQueue queue, Option option){
-        String url = Constants.BASE_URL + endpoint;
+    public void execute(RequestQueue queue, Device device, Option option){
+        String url = Constants.SCHEME + device.getHost() + "/" + device.getNamespace() + endpoint;
         try {
             JSONObject object = option.getJsonObject(options.getKey());
             JsonObjectRequest request = new JsonObjectRequest(methodStringToInt(),
