@@ -1,35 +1,56 @@
 package com.rndapp.roostremote.models;
 
-import com.parse.ParseClassName;
-import com.parse.ParseFile;
-import com.parse.ParseObject;
-
 import org.json.JSONObject;
+
+import java.io.Serializable;
+import java.util.HashMap;
 
 /**
  * Created by ell on 1/11/16.
  */
-@ParseClassName("Device")
-public class Device extends ParseObject{
+public class Device extends ServerObject implements Serializable{
+    private String name;
+    private String host;
+    private String hostNamespace;
+    private String describer;
+    private String describerNamespace;
+    private HashMap properties;
+    private String imageUrl;
 
     public String getName(){
-        return (String) get("name");
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getHost(){
-        return (String) get("host");
+        return host;
     }
 
-    public String getNamespace(){
-        return (String) get("namespace");
+    public String getHostNamespace(){
+        return hostNamespace;
     }
 
-    public ParseFile getImage(){
-        return (ParseFile) get("image");
+    public String getDescriber(){
+        return describer;
     }
 
-    public JSONObject getProperties(){
-        return getJSONObject("properties");
+    public void setDescriber(String describer) {
+        this.describer = describer;
+    }
+
+    public String getDescriberNamespace(){
+        return describerNamespace;
+    }
+
+    public String getImageUrl(){
+        return imageUrl;
+    }
+
+    public HashMap getProperties(){
+        return properties;
     }
 
 }

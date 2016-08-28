@@ -4,9 +4,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
-import com.parse.GetCallback;
-import com.parse.ParseException;
-import com.parse.ParseObject;
 import com.rndapp.roostremote.R;
 import com.rndapp.roostremote.interfaces.OnDeviceClickedListener;
 
@@ -33,21 +30,12 @@ public class DeviceHolder extends RecyclerView.ViewHolder  {
                     if (listener != null) listener.onDeviceClicked(device);
                 }
             });
-            if (device.isDataAvailable()){
-                display(device);
-            }else {
-                device.fetchInBackground(new GetCallback<ParseObject>() {
-                    @Override
-                    public void done(ParseObject object, ParseException e) {
-                        display(device);
-                    }
-                });
-            }
+            display(device);
         }
     }
 
     private void display(Device device){
-        nameTextView.setText(device.getString("name"));
-        urlTextView.setText(device.getString("host"));
+        nameTextView.setText(device.getName());
+        urlTextView.setText(device.getDescriber());
     }
 }

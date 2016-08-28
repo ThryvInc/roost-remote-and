@@ -1,31 +1,25 @@
 package com.rndapp.roostremote.models;
 
-import com.parse.ParseClassName;
-import com.parse.ParseFile;
-import com.parse.ParseObject;
-
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by ell on 1/10/16.
  */
-@ParseClassName("Place")
-public class Place extends ParseObject{
+public class Place extends ServerObject implements Serializable{
+    private String name;
+    private String imageUrl;
+    private List<String> ssids;
 
     public String getName(){
-        return (String) get("name");
+        return name;
     }
 
-    public ParseFile getImage(){
-        return (ParseFile) get("image");
+    public String getImageUrl(){
+        return imageUrl;
     }
 
-    public List<Device> getDevices(){
-        return (List<Device>) get("devices");
-    }
-
-    public ArrayList<String> getSsids(){
-        return new ArrayList<>((List)getList("ssids"));
+    public List<String> getSsids(){
+        return ssids;
     }
 }

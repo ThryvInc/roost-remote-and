@@ -11,10 +11,8 @@ import android.transition.TransitionInflater;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewAnimationUtils;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
-import android.view.animation.TranslateAnimation;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -23,14 +21,16 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
-import com.parse.GetCallback;
-import com.parse.LogInCallback;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseUser;
 import com.rndapp.roostremote.R;
+import com.rndapp.roostremote.api_calls.GetPlacesCall;
+import com.rndapp.roostremote.api_calls.LoginCall;
 import com.rndapp.roostremote.models.Place;
+import com.rndapp.roostremote.models.User;
 
 import java.util.List;
 
@@ -38,6 +38,7 @@ import java.util.List;
  * Created by ell on 1/9/16.
  */
 public class LoginActivity extends AppCompatActivity {
+    private RequestQueue queue;
     private EditText mUsernameView;
     private EditText mPasswordView;
     private CheckBox mRememberMe;
@@ -52,6 +53,8 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         setupWindowAnimations();
 
+        queue = Volley.newRequestQueue(this);
+
         mUsernameView = (EditText) findViewById(R.id.et_username);
         mPasswordView = (EditText) findViewById(R.id.et_password);
 
@@ -64,7 +67,7 @@ public class LoginActivity extends AppCompatActivity {
         mLoginProgressBar = (ProgressBar) findViewById(R.id.pb_login);
 
         mBackgroundImageView = (ImageView)findViewById(R.id.iv_login_bg);
-        Glide.with(this).load(R.drawable.boston_night).centerCrop().into(mBackgroundImageView);
+        Glide.with(this).load(R.drawable.manhattan2).centerCrop().into(mBackgroundImageView);
 
         mSignInRelativeLayout = (RelativeLayout) findViewById(R.id.rl_sign_in);
         mSignInRelativeLayout.setOnClickListener(new View.OnClickListener() {
@@ -121,21 +124,28 @@ public class LoginActivity extends AppCompatActivity {
         }else {
             animateSigningIn();
 
-            ParseUser.logInInBackground(username, password, new LogInCallback() {
+            LoginCall.addRequestToQueue(this, username, password, queue, new LoginCall.UserListener() {
                 @Override
-                public void done(ParseUser user, ParseException e) {
-                    if (e == null){
-                        Place place = ((List<Place>)ParseUser.getCurrentUser().get("places")).get(0);
-                        place.fetchInBackground(new GetCallback<ParseObject>() {
-                            @Override
-                            public void done(ParseObject object, ParseException e) {
-                                startNextActivity();
-                            }
-                        });
-                    }else {
-                        Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        animateBackToSignIn();
-                    }
+                public void onUserParsed(User user) {
+                    GetPlacesCall.addRequestToQueue(LoginActivity.this, queue, new GetPlacesCall.PlacesListener() {
+                        @Override
+                        public void onPlacesParsed(List<Place> places) {
+                            startNextActivity(places);
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(LoginActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+                            animateBackToSignIn();
+                            mLoginProgressBar.setVisibility(View.GONE);
+                        }
+                    });
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(LoginActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+                    animateBackToSignIn();
                     mLoginProgressBar.setVisibility(View.GONE);
                 }
             });
@@ -187,7 +197,7 @@ public class LoginActivity extends AppCompatActivity {
         mSignInTextView.setVisibility(View.VISIBLE);
     }
 
-    private void startNextActivity(){
+    private void startNextActivity(final List<Place> places){
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         int finalRadius = Math.max(displayMetrics.heightPixels, displayMetrics.widthPixels);
         Animator animator = ViewAnimationUtils.createCircularReveal(findViewById(R.id.v_reveal),
@@ -200,7 +210,9 @@ public class LoginActivity extends AppCompatActivity {
             @Override public void onAnimationStart(Animator animation) {}
             @Override
             public void onAnimationEnd(Animator animation) {
-                startActivity(new Intent(LoginActivity.this, PlaceActivity.class));
+                Intent intent = new Intent(LoginActivity.this, PlaceActivity.class);
+                intent.putExtra(PlaceActivity.PLACE_KEY, places.get(0));
+                startActivity(intent);
                 LoginActivity.this.finish();
             }
             @Override public void onAnimationCancel(Animator animation) {}

@@ -25,6 +25,9 @@
         <activity android:name=".activities.DeviceActivity"
             android:theme="@style/AppTheme.NoActionBar.Light"
             />
+        <activity android:name=".activities.EditDeviceActivity"
+            android:theme="@style/AppTheme"
+            />
         <activity android:name=".activities.PlaceActivity"
             android:theme="@style/AppTheme.NoActionBar"
             />

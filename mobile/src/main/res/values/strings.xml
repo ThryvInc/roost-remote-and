@@ -2,7 +2,10 @@
     <string name="app_name">Roost Remote</string>
 
     <string name="hello_world">Hello world!</string>
-    <string name="action_refresh">Refresh</string>
+    <string name="action_edit">Edit</string>
+    <string name="save">Save</string>
+    <string name="name_hint">Name</string>
+    <string name="describer_hint">Describer Server Address</string>
     <string name="sign_in">Sign in</string>
     <string name="username">Username</string>
     <string name="password">Password</string>

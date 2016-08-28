@@ -41,4 +41,11 @@
         android:layout_below="@+id/tv_place_name"
         />
 
+    <!--<ProgressBar-->
+        <!--android:id="@+id/pb_place"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_centerInParent="true"-->
+        <!--/>-->
+
 </RelativeLayout>

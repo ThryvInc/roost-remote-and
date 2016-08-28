@@ -1,7 +1,5 @@
 package com.rndapp.roostremote.models;
 
-import android.util.Log;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -20,8 +18,8 @@ public class Endpoint {
     protected String endpoint;
     protected OptionsHolder options;
 
-    public void execute(RequestQueue queue, Device device, Option option){
-        String url = Constants.SCHEME + device.getHost() + "/" + device.getNamespace() + endpoint;
+    public void execute(RequestQueue queue, ServerDescription description, Option option){
+        String url = Constants.DESCRIBER_SCHEME + description.getHost() + "/" + description.getHostNamespace() + endpoint;
         try {
             JSONObject object = option.getJsonObject(options.getKey());
             JsonObjectRequest request = new JsonObjectRequest(methodStringToInt(),

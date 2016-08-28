@@ -14,6 +14,7 @@ import com.android.volley.toolbox.Volley;
 import com.rndapp.roostremote.R;
 import com.rndapp.roostremote.models.Device;
 import com.rndapp.roostremote.models.Endpoint;
+import com.rndapp.roostremote.models.ServerDescription;
 
 import java.util.List;
 
@@ -22,14 +23,12 @@ import java.util.List;
  */
 public class EndpointAdapter extends RecyclerView.Adapter<EndpointAdapter.EndpointViewHolder>{
     Context context;
-    Device device;
-    List<Endpoint> endpoints;
+    ServerDescription description;
     RequestQueue queue;
 
-    public EndpointAdapter(Context context, Device device, List<Endpoint> endpoints) {
+    public EndpointAdapter(Context context, ServerDescription description) {
         this.context = context;
-        this.device = device;
-        this.endpoints = endpoints;
+        this.description = description;
         this.queue = Volley.newRequestQueue(context);
     }
 
@@ -42,12 +41,12 @@ public class EndpointAdapter extends RecyclerView.Adapter<EndpointAdapter.Endpoi
 
     @Override
     public void onBindViewHolder(EndpointViewHolder endpointViewHolder, int i) {
-        endpointViewHolder.setEndpoint(endpoints.get(i));
+        endpointViewHolder.setEndpoint(description.getEndpoints().get(i));
     }
 
     @Override
     public int getItemCount() {
-        return endpoints.size();
+        return description.getEndpoints().size();
     }
 
     public class EndpointViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
@@ -88,7 +87,7 @@ public class EndpointAdapter extends RecyclerView.Adapter<EndpointAdapter.Endpoi
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            endpoint.execute(queue, device, endpoint.getOptionsHolder().getValues().get(which));
+                            endpoint.execute(queue, description, endpoint.getOptionsHolder().getValues().get(which));
                         }
                     });
             builder.show();

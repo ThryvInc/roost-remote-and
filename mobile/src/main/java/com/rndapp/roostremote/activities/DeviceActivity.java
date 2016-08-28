@@ -1,5 +1,6 @@
 package com.rndapp.roostremote.activities;
 
+import android.content.Intent;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.transition.Fade;
 import android.transition.TransitionInflater;
 import android.util.Log;
@@ -15,28 +17,28 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import com.parse.GetCallback;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
 import com.rndapp.roostremote.Constants;
-import com.rndapp.roostremote.adapters.EndpointAdapter;
 import com.rndapp.roostremote.R;
+import com.rndapp.roostremote.adapters.EndpointAdapter;
+import com.rndapp.roostremote.api_calls.GetDeviceCall;
 import com.rndapp.roostremote.models.Device;
 import com.rndapp.roostremote.models.Endpoint;
 import com.rndapp.roostremote.models.Option;
+import com.rndapp.roostremote.models.ServerDescription;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -46,10 +48,10 @@ import java.util.List;
  * Created by ell on 4/29/15.
  */
 public class DeviceActivity extends AppCompatActivity {
-    public static final String DEVICE_ID_KEY = "DEVICE_ID_KEY";
+    public static final String DEVICE_KEY = "DEVICE_ID_KEY";
     public static final String SSIDS_KEY = "SSIDS_KEY";
     private Device device;
-    protected List<Endpoint> endpoints;
+    private ServerDescription description;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,23 +59,40 @@ public class DeviceActivity extends AppCompatActivity {
         setContentView(R.layout.activity_options_list);
         setupWindowAnimations();
 
-        ParseQuery<Device> query = new ParseQuery<>(Device.class);
-        query.getInBackground(getIntent().getExtras().getString(DEVICE_ID_KEY), new GetCallback<Device>() {
+        device = (Device)getIntent().getExtras().getSerializable(DEVICE_KEY);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        GetDeviceCall.addRequestToQueue(this, device, Volley.newRequestQueue(this), new GetDeviceCall.DeviceListener() {
             @Override
-            public void done(Device object, ParseException e) {
-                device = object;
-
-                CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-                collapsingToolbar.setTitle(device.getName());
-
-                if (device.getImage() != null){
-                    ImageView placeImageView = (ImageView) findViewById(R.id.iv_device);
-                    Glide.with(DeviceActivity.this).load(device.getImage().getUrl()).centerCrop().into(placeImageView);
-                }
-
-                checkForSsids();
+            public void onDeviceParsed(Device device) {
+                DeviceActivity.this.device = device;
+                setup();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void setup(){
+        CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        collapsingToolbar.setTitle(device.getName());
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.anim_toolbar);
+        setSupportActionBar(toolbar);
+
+        if (device.getImageUrl() != null){
+            ImageView placeImageView = (ImageView) findViewById(R.id.iv_device);
+            Glide.with(DeviceActivity.this).load(device.getImageUrl()).centerCrop().into(placeImageView);
+        }
+
+        checkForSsids();
 
         RecyclerView recyclerView = (RecyclerView)findViewById(R.id.rv_endpoints);
         recyclerView.setHasFixedSize(true);
@@ -108,18 +127,18 @@ public class DeviceActivity extends AppCompatActivity {
 
     protected void refreshUi(){
         RecyclerView recyclerView = (RecyclerView)findViewById(R.id.rv_endpoints);
-        recyclerView.setAdapter(new EndpointAdapter(this, device, endpoints));
+        recyclerView.setAdapter(new EndpointAdapter(this, description));
     }
 
     public void fetchEndpoints(){
-        JsonArrayRequest request = new JsonArrayRequest(
-                Constants.SCHEME + device.getHost() + "/" + device.getNamespace() + "/index",
-                new Response.Listener<JSONArray>() {
+        JsonObjectRequest request = new JsonObjectRequest(
+                Constants.DESCRIBER_SCHEME + device.getDescriber() + "/" + device.getDescriberNamespace() + "/index",
+                null,
+                new Response.Listener<JSONObject>() {
             @Override
-            public void onResponse(JSONArray jsonArray) {
+            public void onResponse(JSONObject jsonObject) {
                 Gson gson = new GsonBuilder().registerTypeAdapter(Option.class, new Option.OptionDeserializer()).create();
-                Type listType = new TypeToken<ArrayList<Endpoint>>() {}.getType();
-                endpoints = gson.fromJson(jsonArray.toString(), listType);
+                description = gson.fromJson(jsonObject.toString(), ServerDescription.class);
                 refreshUi();
             }
         }, new Response.ErrorListener() {
@@ -135,8 +154,8 @@ public class DeviceActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.menu_remote, menu);
-        return false;
+        getMenuInflater().inflate(R.menu.menu_remote, menu);
+        return true;
     }
 
     @Override
@@ -146,8 +165,10 @@ public class DeviceActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if (id == R.id.action_refresh) {
-            fetchEndpoints();
+        if (id == R.id.action_edit) {
+            Intent intent = new Intent(this, EditDeviceActivity.class);
+            intent.putExtra(EditDeviceActivity.DEVICE_KEY, device);
+            startActivity(intent);
             return true;
         }
 
