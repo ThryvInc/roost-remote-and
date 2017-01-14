@@ -3,13 +3,18 @@ package com.rndapp.roostremote.adapters;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.Resources;
+import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.rndapp.roostremote.R;
 import com.rndapp.roostremote.models.Device;
@@ -69,28 +74,40 @@ public class EndpointAdapter extends RecyclerView.Adapter<EndpointAdapter.Endpoi
 
         @Override
         public void onClick(View v) {
-            //show chooser
+            if (endpoint.getOptionsHolder().getValues().size() == 1){
+                executeEndpoint(0);
+            }else {
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle("Choose an Action");
+                builder.setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(
-                    context);
-            builder.setTitle("Choose an Action");
-            builder.setNegativeButton("Cancel",
-                    new DialogInterface.OnClickListener() {
+                final ActionAdapter adapter = new ActionAdapter(context, endpoint.getOptionsHolder().getValues());
+                builder.setAdapter(adapter,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                executeEndpoint(which);
+                            }
+                        });
+                builder.show();
+            }
+        }
+
+        private void executeEndpoint(int which){
+            endpoint.execute(queue, description,
+                    endpoint.getOptionsHolder().getValues().get(which), new Response.ErrorListener() {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
+                        public void onErrorResponse(VolleyError volleyError) {
+                            volleyError.printStackTrace();
+                            Toast.makeText(context, volleyError.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                         }
                     });
-
-            final ActionAdapter adapter = new ActionAdapter(context, endpoint.getOptionsHolder().getValues());
-            builder.setAdapter(adapter,
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            endpoint.execute(queue, description, endpoint.getOptionsHolder().getValues().get(which));
-                        }
-                    });
-            builder.show();
         }
     }
 }

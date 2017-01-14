@@ -19,6 +19,7 @@ import java.util.Map;
  * Created by ell on 8/26/16.
  */
 public class EditDeviceCall extends AuthenticatedCall{
+
     public interface CallFinishedListener {
         void callFinishedSuccessfully();
     }
@@ -30,6 +31,7 @@ public class EditDeviceCall extends AuthenticatedCall{
         try {
             jsonObject.put("name", device.getName());
             jsonObject.put("describer", device.getDescriber());
+            jsonObject.put("properties", new JSONObject(device.getProperties()));
         } catch (JSONException e) {
             e.printStackTrace();
         }

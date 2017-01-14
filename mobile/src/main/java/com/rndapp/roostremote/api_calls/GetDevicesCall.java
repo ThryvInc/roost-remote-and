@@ -1,6 +1,7 @@
 package com.rndapp.roostremote.api_calls;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.RequestQueue;
@@ -32,6 +33,7 @@ public class GetDevicesCall {
         JsonArrayRequest request = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
+                Log.d("response", response.toString());
                 List<Device> devices = new Gson().fromJson(response.toString(), new TypeToken<ArrayList<Device>>(){}.getType());
                 listener.onDevicesParsed(devices);
             }

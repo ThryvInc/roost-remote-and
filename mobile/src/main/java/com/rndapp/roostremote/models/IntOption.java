@@ -3,6 +3,8 @@ package com.rndapp.roostremote.models;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.List;
+
 /**
  * Created by ell on 5/16/15.
  */
@@ -26,7 +28,7 @@ public class IntOption extends Option{
         return name;
     }
 
-    public int getValue(){
+    public Integer getValue(){
         return value;
     }
 }

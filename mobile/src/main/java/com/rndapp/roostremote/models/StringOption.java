@@ -6,13 +6,14 @@ import org.json.JSONObject;
 import java.util.List;
 
 /**
- * Created by ell on 5/16/15.
+ * Created by ell on 1/3/17.
  */
-public class BoolOption extends Option{
-    protected String name;
-    protected boolean value;
 
-    public BoolOption(String name, boolean value) {
+public class StringOption extends Option {
+    protected String name;
+    protected String value;
+
+    public StringOption(String name, String value) {
         this.name = name;
         this.value = value;
     }
@@ -24,11 +25,12 @@ public class BoolOption extends Option{
         return jsonObject;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
-    public Boolean getValue(){
+    public String getValue() {
         return value;
     }
 }

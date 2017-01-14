@@ -1,11 +1,15 @@
 package com.rndapp.roostremote.models;
 
+import android.util.Log;
+import android.widget.Toast;
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.rndapp.roostremote.Constants;
+import com.rndapp.roostremote.activities.LoginActivity;
 
 import org.json.JSONObject;
 
@@ -18,24 +22,21 @@ public class Endpoint {
     protected String endpoint;
     protected OptionsHolder options;
 
-    public void execute(RequestQueue queue, ServerDescription description, Option option){
+    public void execute(final RequestQueue queue, ServerDescription description, Option option, Response.ErrorListener errorListener){
         String url = Constants.DESCRIBER_SCHEME + description.getHost() + "/" + description.getHostNamespace() + endpoint;
         try {
             JSONObject object = option.getJsonObject(options.getKey());
+            Option.addStaticValues(object, options.getStaticValues());
+            Log.d("object", object.toString());
             JsonObjectRequest request = new JsonObjectRequest(methodStringToInt(),
                     url,
                     object,
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject jsonObject) {
-
+                            Log.d("response", jsonObject.toString());
                         }
-                    }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError volleyError) {
-
-                }
-            });
+                    }, errorListener);
             queue.add(request);
         }catch (Exception e){
             e.printStackTrace();

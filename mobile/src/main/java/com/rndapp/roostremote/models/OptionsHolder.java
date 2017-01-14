@@ -1,5 +1,7 @@
 package com.rndapp.roostremote.models;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 
 /**
@@ -7,6 +9,8 @@ import java.util.ArrayList;
  */
 public class OptionsHolder {
     protected String key;
+    @SerializedName("static_values")
+    protected ArrayList<Option> staticValues;
     protected ArrayList<Option> values;
 
     public String getKey() {
@@ -15,5 +19,9 @@ public class OptionsHolder {
 
     public ArrayList<Option> getValues() {
         return values;
+    }
+
+    public ArrayList<Option> getStaticValues() {
+        return staticValues;
     }
 }

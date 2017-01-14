@@ -53,4 +53,7 @@ public class Device extends ServerObject implements Serializable{
         return properties;
     }
 
+    public void setProperties(HashMap properties) {
+        this.properties = properties;
+    }
 }

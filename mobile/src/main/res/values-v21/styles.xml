@@ -49,6 +49,12 @@
         <!-- specify enter and exit transitions -->
         <item name="android:windowEnterTransition">@transition/fade</item>
         <item name="android:windowExitTransition">@transition/fade</item>
+
+        <item name="android:alertDialogTheme">@style/Dialog</item>
+    </style>
+
+    <style name="Dialog" parent="Base.Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorAccent">@color/accent</item>
     </style>
 
 </resources>

@@ -144,7 +144,9 @@ public class DeviceActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
-                Log.e("error", "error");
+                volleyError.printStackTrace();
+                Log.e("error", volleyError.getLocalizedMessage());
+                Toast.makeText(getApplicationContext(), volleyError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
         Volley.newRequestQueue(this).add(request);
