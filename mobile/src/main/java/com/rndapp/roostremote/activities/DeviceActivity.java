@@ -169,7 +169,7 @@ public class DeviceActivity extends AppCompatActivity {
 
         if (id == R.id.action_edit) {
             Intent intent = new Intent(this, EditDeviceActivity.class);
-            intent.putExtra(EditDeviceActivity.DEVICE_KEY, device);
+            intent.putExtra(EditDeviceActivity.Companion.getDEVICE_KEY(), device);
             startActivity(intent);
             return true;
         }
