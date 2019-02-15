@@ -211,7 +211,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onAnimationEnd(Animator animation) {
                 Intent intent = new Intent(LoginActivity.this, PlaceActivity.class);
-                intent.putExtra(PlaceActivity.PLACE_KEY, places.get(0));
+                intent.putExtra(PlaceActivity.Companion.getPLACE_KEY(), places.get(0));
                 startActivity(intent);
                 LoginActivity.this.finish();
             }

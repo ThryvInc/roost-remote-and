@@ -4,11 +4,14 @@
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:name=".RoostRemoteApplication"
+        android:usesCleartextTraffic="true"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
@@ -31,6 +34,11 @@
         <activity android:name=".activities.PlaceActivity"
             android:theme="@style/AppTheme.NoActionBar"
             />
+        <activity android:name=".activities.FlowActivity" />
+        <activity android:name=".activities.FlowsActivity" />
+        <activity android:name=".activities.CreateFlowActivity" />
+
+        <receiver android:name=".models.triggers.AlarmReceiver"/>
     </application>
 
 </manifest>
