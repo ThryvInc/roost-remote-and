@@ -122,7 +122,7 @@ class CreateFlowActivity: AppCompatActivity(), TimePickerDialog.OnTimeSetListene
         val name = nameEditText.text.toString()
         if (name.isNotBlank()) {
             val flow = Flow(name, tasks, triggersAdapter.triggers)
-            val allFlows = Flow.getFlows(this) ?: ArrayList()
+            val allFlows = Flow.getFlows(this)?.filter { it.name != name } ?: ArrayList()
             val newFlows = ArrayList(allFlows)
             newFlows.add(flow)
             Flow.setFlows(newFlows, this)
@@ -158,20 +158,20 @@ class CreateFlowActivity: AppCompatActivity(), TimePickerDialog.OnTimeSetListene
     fun createEndpointTask() {
         val names = ArrayList<String>(devices.map { it.name } )
         val titles = Array(names.size, { i -> names[i] })
-        promptList(titles, "Which device?", { which ->
+        promptList(titles, "Which device?") { which ->
             device = devices[which]
             fetchEndpoints(devices[which])
-        })
+        }
     }
 
     fun createFlowTask() {
         val names = ArrayList<String>(Flow.flows?.map { it.name })
-        val titles = Array(names.size, { i -> names[i] })
-        promptList(titles, "Which batch?", { which ->
+        val titles = Array(names.size) { i -> names[i] }
+        promptList(titles, "Which batch?") { which ->
             val name = titles[which]
             tasks.add(FlowTask(name))
             tasksAdapter.notifyDataSetChanged()
-        })
+        }
     }
 
     fun createAlarmTrigger() {
@@ -237,9 +237,9 @@ class CreateFlowActivity: AppCompatActivity(), TimePickerDialog.OnTimeSetListene
         if (endpoints != null) {
             val names = ArrayList<String>(endpoints.map { it.name } )
             val titles = Array(names.size, { i -> names[i] })
-            promptList(titles, "Which endpoint?", { which ->
+            promptList(titles, "Which endpoint?") { which ->
                 promptOption(endpoints[which])
-            })
+            }
         }
     }
 
@@ -252,12 +252,12 @@ class CreateFlowActivity: AppCompatActivity(), TimePickerDialog.OnTimeSetListene
                 tasksAdapter.notifyDataSetChanged()
             } else {
                 val names = ArrayList<String>(options.map { it.name } )
-                val titles = Array(names.size, { i -> names[i] })
-                promptList(titles, "Which action?", { which ->
+                val titles = Array(names.size) { i -> names[i] }
+                promptList(titles, "Which action?") { which ->
                     val task = EndpointOptionTask(device!!, deviceDescription!!, endpoint, options[which])
                     tasks.add(task)
                     tasksAdapter.notifyDataSetChanged()
-                })
+                }
             }
         }
     }
@@ -279,11 +279,11 @@ class CreateFlowActivity: AppCompatActivity(), TimePickerDialog.OnTimeSetListene
         alertDialogBuilder.setTitle("Task")
                 .setMessage("What would you like to do?")
                 .setCancelable(true)
-                .setPositiveButton("Delete", { dialogInterface, i ->
+                .setPositiveButton("Delete") { _, _ ->
                     tasks.remove(tasks[position])
                     recyclerView.adapter?.notifyDataSetChanged()
-                })
-                .setNegativeButton("Cancel", { dialog, id -> })
+                }
+                .setNegativeButton("Cancel") { _, _ -> }
 
         alertDialogBuilder.show()
     }

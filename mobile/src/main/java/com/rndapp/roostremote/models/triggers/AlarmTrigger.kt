@@ -4,8 +4,6 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.util.Log
-import com.rndapp.roostremote.models.Flow
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -45,10 +43,10 @@ class AlarmTrigger(flowName: String,
     }
 }
 
-internal val calendar: Calendar by lazy {
-    val cal = Calendar.getInstance()
-    return@lazy cal
-}
+internal val calendar: Calendar
+    get() {
+        return Calendar.getInstance()
+    }
 
 fun nextTime(dateString: String): Date {
     val cal = Calendar.getInstance()
@@ -58,9 +56,12 @@ fun nextTime(dateString: String): Date {
     cal.set(Calendar.MINUTE, date.minutes)
     cal.set(Calendar.SECOND, 0)
     date = cal.time
-    if (date.before(now())) date = 1.day.after(date)
+    if (date isBefore now()) date = 1.day.after(date)
     return date
 }
+
+infix fun Date.isAfter(date: Date) = this.after(date)
+infix fun Date.isBefore(date: Date) = this.before(date)
 
 fun now(): Date = calendar.time
 
@@ -98,6 +99,7 @@ class Duration(internal val unit: Int, internal val value: Int) {
     fun after(date: Date) = calculate(date, value)
 
     private fun calculate(from: Date, value: Int): Date {
+        val calendar = calendar
         calendar.time = from
         calendar.add(unit, value)
         return calendar.time

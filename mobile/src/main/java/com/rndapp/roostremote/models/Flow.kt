@@ -2,12 +2,11 @@ package com.rndapp.roostremote.models
 
 import android.app.Activity
 import android.content.Context
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.rndapp.roostremote.models.tasks.Task
-import java.io.Serializable
 import com.google.gson.reflect.TypeToken
+import com.rndapp.roostremote.models.tasks.Task
 import com.rndapp.roostremote.models.triggers.Trigger
+import java.io.Serializable
 
 class Flow(var name: String, var tasks: List<Task>, var triggers: List<Trigger>? = null): Serializable {
     companion object {
@@ -26,7 +25,7 @@ class Flow(var name: String, var tasks: List<Task>, var triggers: List<Trigger>?
 
         fun getFlows(context: Context): List<Flow>? {
             refreshFlows(context)
-            return flows
+            return flows?.reversed()
         }
 
         fun setFlows(flows: List<Flow>, context: Context) {

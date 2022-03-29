@@ -48,6 +48,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 import java.lang.reflect.Type
+import java.nio.charset.Charset
 import java.util.ArrayList
 
 /**
@@ -75,7 +76,7 @@ class DeviceActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        GetDeviceCall.addRequestToQueue(this, device, Volley.newRequestQueue(this), { device ->
+        GetDeviceCall.addRequestToQueue(this, device!!, Volley.newRequestQueue(this), { device ->
             this@DeviceActivity.device = device
             setup()
         }) { error ->
@@ -129,7 +130,7 @@ class DeviceActivity : AppCompatActivity() {
         val device = device
         val description = description
         if (device != null && description != null) {
-            recyclerView.adapter = EndpointAdapter(device, description, { endpoint, option ->
+            recyclerView.adapter = EndpointAdapter(device, description) { endpoint, option ->
                 if (option != null) {
                     endpoint?.execute(device, description,
                             option, null, Response.ErrorListener { volleyError ->
@@ -137,7 +138,7 @@ class DeviceActivity : AppCompatActivity() {
                         Toast.makeText(this@DeviceActivity, volleyError.localizedMessage, Toast.LENGTH_LONG).show()
                     })
                 }
-            })
+            }
         }
     }
 
