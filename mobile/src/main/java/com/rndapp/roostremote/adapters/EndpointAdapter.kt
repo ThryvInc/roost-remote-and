@@ -4,8 +4,8 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.res.Resources
-import android.support.v7.view.ContextThemeWrapper
-import android.support.v7.widget.RecyclerView
+import androidx.appcompat.view.ContextThemeWrapper
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,7 +28,7 @@ import com.rndapp.roostremote.models.ServerDescription
 class EndpointAdapter(internal var device: Device,
                       internal var description: ServerDescription,
                       val chosenCallback: (Endpoint?, Option?) -> Unit)
-    : RecyclerView.Adapter<EndpointAdapter.EndpointViewHolder>() {
+    : androidx.recyclerview.widget.RecyclerView.Adapter<EndpointAdapter.EndpointViewHolder>() {
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): EndpointViewHolder {
         val inflater = LayoutInflater.from(viewGroup.context)
@@ -44,7 +44,7 @@ class EndpointAdapter(internal var device: Device,
         return description.endpoints!!.size
     }
 
-    inner class EndpointViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+    inner class EndpointViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView), View.OnClickListener {
         internal var nameTextView: TextView
         internal var endpointTextView: TextView
         internal var endpoint: Endpoint? = null

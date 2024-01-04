@@ -7,14 +7,14 @@ import android.content.pm.PackageManager
 import android.net.wifi.WifiInfo
 import android.net.wifi.WifiManager
 import android.os.Bundle
-import android.support.design.widget.CollapsingToolbarLayout
-import android.support.design.widget.FloatingActionButton
-import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.Toolbar
+import com.google.android.material.appbar.CollapsingToolbarLayout
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.appcompat.widget.Toolbar
 import android.transition.Fade
 import android.transition.TransitionInflater
 import android.util.Log
@@ -99,9 +99,10 @@ class DeviceActivity : AppCompatActivity() {
 
         checkForSsids()
 
-        val recyclerView = findViewById<View>(R.id.rv_endpoints) as RecyclerView
+        val recyclerView = findViewById<View>(R.id.rv_endpoints) as androidx.recyclerview.widget.RecyclerView
         recyclerView.setHasFixedSize(true)
-        val layoutManager = LinearLayoutManager(this@DeviceActivity)
+        val layoutManager =
+            androidx.recyclerview.widget.LinearLayoutManager(this@DeviceActivity)
         recyclerView.layoutManager = layoutManager
 
         val button = findViewById<View>(R.id.fab) as FloatingActionButton
@@ -126,7 +127,7 @@ class DeviceActivity : AppCompatActivity() {
     }
 
     protected fun refreshUi() {
-        val recyclerView = findViewById<View>(R.id.rv_endpoints) as RecyclerView
+        val recyclerView = findViewById<View>(R.id.rv_endpoints) as androidx.recyclerview.widget.RecyclerView
         val device = device
         val description = description
         if (device != null && description != null) {

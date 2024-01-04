@@ -1,13 +1,14 @@
 package com.rndapp.roostremote.activities
 
+import android.app.AlarmManager
 import android.app.AlertDialog
 import android.app.TimePickerDialog
 import android.content.DialogInterface
 import android.os.Bundle
-import android.support.design.widget.TabLayout
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import com.google.android.material.tabs.TabLayout
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.EditText
@@ -24,6 +25,7 @@ import com.rndapp.roostremote.adapters.TriggersAdapter
 import com.rndapp.roostremote.api_calls.GetDeviceTypeCall
 import com.rndapp.roostremote.api_calls.GetDevicesCall
 import com.rndapp.roostremote.api_calls.GetPlacesCall
+import com.rndapp.roostremote.api_calls.GetSunTimesCall
 import com.rndapp.roostremote.api_calls.VolleyManager
 import com.rndapp.roostremote.interfaces.OnItemClickedListener
 import com.rndapp.roostremote.models.*
@@ -32,7 +34,12 @@ import com.rndapp.roostremote.models.tasks.FlowTask
 import com.rndapp.roostremote.models.tasks.Task
 import com.rndapp.roostremote.models.tasks.WaitTask
 import com.rndapp.roostremote.models.triggers.AlarmTrigger
+import com.rndapp.roostremote.models.triggers.SunsetTrigger
 import com.rndapp.roostremote.models.triggers.Trigger
+import com.rndapp.roostremote.models.triggers.WifiConnectionTrigger
+import com.rndapp.roostremote.models.triggers.now
+import com.thryvinc.thux.models.isoDateFormatter
+import com.thryvinc.thux.models.isoPlusFormatter
 import kotlinx.android.synthetic.main.activity_edit_list.*
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -45,7 +52,7 @@ class CreateFlowActivity: AppCompatActivity(), TimePickerDialog.OnTimeSetListene
     var deviceDescription: ServerDescription? = null
     var tasks = ArrayList<Task>()
     var tasksAdapter = TaskAdapter(tasks, object: OnItemClickedListener {
-        override fun onViewHolderClicked(holder: RecyclerView.ViewHolder, position: Int) {
+        override fun onViewHolderClicked(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
             deleteTask(position)
         }
     })
@@ -71,7 +78,8 @@ class CreateFlowActivity: AppCompatActivity(), TimePickerDialog.OnTimeSetListene
 
         supportActionBar?.title = "New Batch"
 
-        val layoutManager = LinearLayoutManager(this@CreateFlowActivity)
+        val layoutManager =
+            androidx.recyclerview.widget.LinearLayoutManager(this@CreateFlowActivity)
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter = tasksAdapter
 
@@ -106,10 +114,12 @@ class CreateFlowActivity: AppCompatActivity(), TimePickerDialog.OnTimeSetListene
                     }
                 }
             } else {
-                val titles = arrayOf(AlarmTrigger.typeDescription)
+                val titles = arrayOf(AlarmTrigger.typeDescription, SunsetTrigger.typeDescription)
                 promptList(titles, "Choose a trigger type") { which ->
                     when (titles[which]) {
                         AlarmTrigger.typeDescription -> createAlarmTrigger()
+                        WifiConnectionTrigger.typeDescription -> createWifiTrigger()
+                        SunsetTrigger.typeDescription -> createSunsetTrigger()
                     }
                 }
             }
@@ -193,9 +203,64 @@ class CreateFlowActivity: AppCompatActivity(), TimePickerDialog.OnTimeSetListene
         val name = nameEditText.text.toString()
         if (name.isNotBlank()) {
             val alarmTrigger = AlarmTrigger(name, timeFormatter.format(cal.time))
-            alarmTrigger.toggleEnabled(this)
             triggersAdapter.triggers.add(alarmTrigger)
             triggersAdapter.notifyChanged()
+        }
+    }
+
+    fun createWifiTrigger() {
+
+    }
+
+    fun createSunsetTrigger() {
+        val sunrise = "Sunrise"
+        val sunset = "Sunset"
+        val titles = arrayOf(sunrise, sunset)
+
+        promptList(titles, "Which?") { which ->
+            when (titles[which]) {
+                sunrise -> {
+                    val name = nameEditText.text.toString()
+                    val suntimeTrigger = SunsetTrigger(name, "Sunrise")
+                    triggersAdapter.triggers.add(suntimeTrigger)
+                    triggersAdapter.notifyChanged()
+//                    GetSunTimesCall().addRequestToQueue(VolleyManager.queue!!, { todaySunTimes, tomorrowSunTimes ->
+//                        if (todaySunTimes != null) {
+//                            var date = isoPlusFormatter().parse(todaySunTimes.sunrise)
+//
+//                            val timeFormatter: DateFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT)
+//                            val name = nameEditText.text.toString()
+//                            if (name.isNotBlank()) {
+//                                val alarmTrigger = AlarmTrigger(name, timeFormatter.format(date))
+//                                triggersAdapter.triggers.add(alarmTrigger)
+//                                triggersAdapter.notifyChanged()
+//                            }
+//                        }
+//                    }) { error ->
+//                        error.printStackTrace()
+//                    }
+                }
+                sunset -> {
+                    val name = nameEditText.text.toString()
+                    val suntimeTrigger = SunsetTrigger(name, "Sunset")
+                    triggersAdapter.triggers.add(suntimeTrigger)
+                    triggersAdapter.notifyChanged()
+//                    GetSunTimesCall().addRequestToQueue(VolleyManager.queue!!, { todaySunTimes, tomorrowSunTimes ->
+//                        if (todaySunTimes != null) {
+//                            var date = isoPlusFormatter().parse(todaySunTimes.sunset)
+//
+//                            val timeFormatter: DateFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT)
+//                            val name = nameEditText.text.toString()
+//                            if (name.isNotBlank()) {
+//                                val alarmTrigger = AlarmTrigger(name, timeFormatter.format(date))
+//
+//                            }
+//                        }
+//                    }) { error ->
+//                        error.printStackTrace()
+//                    }
+                }
+            }
         }
     }
 

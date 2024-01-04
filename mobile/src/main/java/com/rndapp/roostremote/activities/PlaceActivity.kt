@@ -2,9 +2,9 @@ package com.rndapp.roostremote.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.transition.Fade
 import android.transition.TransitionInflater
 import android.widget.Toast
@@ -30,7 +30,7 @@ class PlaceActivity : AppCompatActivity() {
     private var queue: RequestQueue? = null
     private var place: Place? = null
     private var devices: List<Device>? = null
-    private var recyclerView: RecyclerView? = null
+    private var recyclerView: androidx.recyclerview.widget.RecyclerView? = null
     private var adapter: DeviceAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,7 +67,11 @@ class PlaceActivity : AppCompatActivity() {
                 }
             })
 
-            val manager = LinearLayoutManager(this@PlaceActivity, LinearLayoutManager.VERTICAL, false)
+            val manager = androidx.recyclerview.widget.LinearLayoutManager(
+                this@PlaceActivity,
+                androidx.recyclerview.widget.LinearLayoutManager.VERTICAL,
+                false
+            )
             recyclerView = devicesRecyclerView
             recyclerView!!.layoutManager = manager
             recyclerView!!.adapter = adapter

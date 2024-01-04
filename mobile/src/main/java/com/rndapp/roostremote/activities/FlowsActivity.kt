@@ -2,9 +2,9 @@ package com.rndapp.roostremote.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import com.rndapp.roostremote.R
 import com.rndapp.roostremote.adapters.FlowAdapter
@@ -16,11 +16,11 @@ import kotlinx.android.synthetic.main.activity_edit_list.*
 class FlowsActivity: AppCompatActivity() {
     var flows: ArrayList<Flow> = ArrayList()
     val adapter: FlowAdapter = FlowAdapter(flows, object: OnItemClickedListener {
-        override fun onViewHolderClicked(holder: RecyclerView.ViewHolder, position: Int) {
+        override fun onViewHolderClicked(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
             flows[position].executeTasks()
         }
     }, object: OnItemLongClickedListener {
-        override fun onViewHolderLongClicked(holder: RecyclerView.ViewHolder, position: Int) {
+        override fun onViewHolderLongClicked(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
             val intent = Intent(this@FlowsActivity, CreateFlowActivity::class.java)
             intent.putExtra("flow", flows[position])
             startActivity(intent)
@@ -38,7 +38,8 @@ class FlowsActivity: AppCompatActivity() {
         nameEditText.visibility = View.GONE
         tabs.visibility = View.GONE
 
-        val layoutManager = LinearLayoutManager(this)
+        val layoutManager =
+            androidx.recyclerview.widget.LinearLayoutManager(this)
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter = adapter
 

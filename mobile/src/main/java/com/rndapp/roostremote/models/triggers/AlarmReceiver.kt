@@ -6,6 +6,8 @@ import android.content.Intent
 import android.os.PowerManager
 import android.widget.Toast
 import com.rndapp.roostremote.models.Flow
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class AlarmReceiver: BroadcastReceiver() {
     companion object {
@@ -27,8 +29,15 @@ class AlarmReceiver: BroadcastReceiver() {
                 val trigger = flow?.triggers?.filter { it.hashCode() == hashCode }?.firstOrNull()
                 if (trigger != null && trigger.enabled) {
                     flow.executeTasks()
+                    if (trigger is AlarmTrigger) {
+                        if (trigger.daysOfWeek.isEmpty()) {
+                            trigger?.enabled = false
+                        } else {
+                            trigger.toggleEnabled(context)
+                            trigger.toggleEnabled(context)
+                        }
+                    }
                 }
-                trigger?.enabled = false
 
                 Flow.saveFlows(context)
 

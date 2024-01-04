@@ -1,6 +1,6 @@
 package com.rndapp.roostremote.models
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import android.widget.TextView
 
@@ -10,7 +10,7 @@ import com.rndapp.roostremote.interfaces.OnDeviceClickedListener
 /**
  * Created by ell on 1/11/16.
  */
-class DeviceHolder(itemView: View, private val listener: OnDeviceClickedListener?) : RecyclerView.ViewHolder(itemView) {
+class DeviceHolder(itemView: View, private val listener: OnDeviceClickedListener?) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
     private val nameTextView: TextView
     private val urlTextView: TextView
 

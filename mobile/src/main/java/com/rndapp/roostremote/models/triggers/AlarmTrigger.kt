@@ -4,21 +4,23 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import com.rndapp.roostremote.api_calls.GetSunTimesCall
+import com.rndapp.roostremote.api_calls.VolleyManager
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
-class AlarmTrigger(flowName: String,
+open class AlarmTrigger(flowName: String,
                    var timeOfDay: String = "6:00 AM",
-                   val daysOfWeek: List<String> = ArrayList(),
+                   val daysOfWeek: ArrayList<String> = ArrayList(),
                    enabled: Boolean = false):
         Trigger(flowName, timeOfDay, enabled) {
     companion object {
         const val typeDescription = "Alarm"
     }
 
-    fun toggleEnabled(context: Context?) {
+    open fun toggleEnabled(context: Context?) {
         if (context != null) {
             val alarmMgr = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
@@ -31,10 +33,29 @@ class AlarmTrigger(flowName: String,
             alarmMgr.cancel(alarmIntent)
 
             if (!enabled) {
-                val date = nextTime(timeOfDay)
-                alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, date.time, alarmIntent)
+                GetSunTimesCall().addRequestToQueue(VolleyManager.queue!!, { todaySunTimes, tomorrowSunTimes ->
+                setAlarmAt(alarmMgr, alarmIntent)
+                }) { error ->
+                    error.printStackTrace()
+                }
             }
             enabled = !enabled
+        }
+    }
+
+    fun setAlarmAt(alarmMgr: AlarmManager, alarmIntent: PendingIntent) {
+        val date = nextTime(timeOfDay)
+        if (daysOfWeek.isEmpty()) {
+            alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, date.time, alarmIntent)
+        } else {
+            for (i in 0..7) {
+                val day = SimpleDateFormat("EEEE", Locale.US).format(i.days.after(date))
+                if (daysOfWeek.contains(day)) {
+                    println("added: $date")
+                    alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, i.days.after(date).time, alarmIntent)
+                    break
+                }
+            }
         }
     }
 
@@ -64,6 +85,8 @@ infix fun Date.isAfter(date: Date) = this.after(date)
 infix fun Date.isBefore(date: Date) = this.before(date)
 
 fun now(): Date = calendar.time
+
+fun tomorrow(): Date = 1.day.after(now())
 
 val Int.day: Duration
     get() = Duration(unit = Calendar.DAY_OF_YEAR, value = this)
@@ -97,6 +120,7 @@ class Duration(internal val unit: Int, internal val value: Int) {
     val fromNow = since
 
     fun after(date: Date) = calculate(date, value)
+    fun before(date: Date) = calculate(date, -value)
 
     private fun calculate(from: Date, value: Int): Date {
         val calendar = calendar

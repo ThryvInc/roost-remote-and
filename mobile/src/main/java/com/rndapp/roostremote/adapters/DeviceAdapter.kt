@@ -1,6 +1,6 @@
 package com.rndapp.roostremote.adapters
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +13,7 @@ import com.rndapp.roostremote.models.DeviceHolder
 /**
  * Created by ell on 1/11/16.
  */
-class DeviceAdapter(private val devices: List<Device>?, private val listener: OnDeviceClickedListener) : RecyclerView.Adapter<DeviceHolder>() {
+class DeviceAdapter(private val devices: List<Device>?, private val listener: OnDeviceClickedListener) : androidx.recyclerview.widget.RecyclerView.Adapter<DeviceHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DeviceHolder {
         val inflater = LayoutInflater.from(parent.context)
